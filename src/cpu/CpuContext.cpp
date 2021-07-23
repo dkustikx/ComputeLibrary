@@ -29,7 +29,8 @@
 #include "src/runtime/CPUUtils.h"
 
 #include <cstdlib>
-#include <malloc.h>
+//#include <malloc.h>
+#include <stdlib.h>
 
 namespace arm_compute
 {
@@ -54,7 +55,9 @@ void *default_aligned_allocate(void *user_data, size_t size, size_t alignment)
 #if defined(BARE_METAL) || defined(__APPLE__)
     size_t rem       = size % alignment;
     size_t real_size = (rem) ? (size + alignment - rem) : size;
-    ptr              = memalign(alignment, real_size);
+//    ptr              = memalign(alignment, real_size);
+    int err;
+    err = posix_memalign((void**)&ptr, alignment, real_size);
 #else  /* defined(BARE_METAL) || defined(__APPLE__) */
     if(posix_memalign(&ptr, alignment, size) != 0)
     {
